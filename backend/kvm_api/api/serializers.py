@@ -28,9 +28,7 @@ class StatusChoiceField(serializers.ChoiceField):
     def to_representation(self, value):
         """
         Serialize the value's class name.
-        """
-        
-        # breakpoint()
+        """        
         return {
             "id": value,
             "state": CHOICES[value][1]
@@ -41,7 +39,14 @@ class StatusChoiceField(serializers.ChoiceField):
 
 class VmReadSerializer(serializers.Serializer):
     id = serializers.IntegerField()
-    name = serializers.CharField()
-    cpu = serializers.IntegerField()
-    ram = serializers.IntegerField()
+    name = serializers.CharField(max_length=100)
+    ram = serializers.IntegerField(min_value=1)
+    cpu = serializers.IntegerField(min_value=1)
     state = StatusChoiceField(choices=CHOICES)
+
+
+
+class VmCreateSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=100)
+    ram = serializers.IntegerField(min_value=1)
+    cpu = serializers.IntegerField(min_value=1)
