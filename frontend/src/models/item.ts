@@ -1,5 +1,12 @@
 export interface Item {
-    id: string,
-    title: string,
-    text?: string,
-}
+    uuid: string;
+    name: string;
+    ram: number;
+    cpu: number;
+    state: State;
+  }
+  export interface State {
+    id: number;
+    state: string;
+  }
+  
