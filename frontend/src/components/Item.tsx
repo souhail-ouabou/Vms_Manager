@@ -8,9 +8,9 @@ interface ItemProps {
     item: ItemModel;
     // onChangeStateClicked : (item: ItemModel) => void
    // onItemClicked: (item: ItemModel) => void,
-    // onDeleteClicked: (note: NoteModel) => void
+    onDeleteClicked: (item: ItemModel) => void
 }
-const Item = ({ item }: ItemProps) => {
+const Item = ({ item,onDeleteClicked }: ItemProps) => {
     let [check, setCheck] = useState(item.state.id == 1 ? true : false);
     let [currentState, setCurrentState] = useState(false);
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,7 +50,7 @@ const Item = ({ item }: ItemProps) => {
             <div className='absolute top-0 right-0 left-0 bg-red-600 rounded-tr-md  rounded-bl-xl w-10 h-10  flex ml-auto'>
                 <FaTrash className="m-auto text-white justify-center items-center"
                     onClick={(e) => {
-                        // onDeleteClicked(note);
+                         onDeleteClicked(item);
                         e.stopPropagation();
                     }}
                 />
