@@ -38,7 +38,7 @@ class StatusChoiceField(serializers.ChoiceField):
 
 
 class VmReadSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
+    uuid = serializers.UUIDField()
     name = serializers.CharField(max_length=100)
     ram = serializers.IntegerField(min_value=1)
     cpu = serializers.IntegerField(min_value=1)
