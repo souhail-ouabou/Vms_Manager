@@ -40,30 +40,42 @@ class LibvirtWrapper:
         domain = self.get_domain(domain_name)
         domain.create()
         
+        
+    def get_vm_detail(self, uuid):
+        domain = self.conn.lookupByUUID(uuid)
+        parsed_xml = untangle.parse(domain.XMLDesc())
+        # id = int(parsed_xml.domain["id"])
+        name = parsed_xml.domain.name.cdata
+        uuid = parsed_xml.domain.uuid.cdata
+        ram = int(parsed_xml.domain.memory.cdata) // 1e+6
+        cpu = int(parsed_xml.domain.vcpu.cdata)
+        state = domain.state()[0]
+        
+        return {
+            "uuid": uuid,
+            "name": name,
+            "ram":ram,
+            "cpu":cpu,
+            "state":state
+        }
+        
     def get_vms(self):
         domains = self.conn.listAllDomains()
         vms = []
         # breakpoint()
         for domain in domains:
-            print(domain.XMLDesc())
-            print(domain.OSType())
-            parsed_xml = untangle.parse(domain.XMLDesc())
-            # breakpoint()
-            # id = int(parsed_xml.domain["id"])
-            name = parsed_xml.domain.name.cdata
-            uuid = parsed_xml.domain.uuid.cdata
-            ram = int(parsed_xml.domain.memory.cdata) // 1024
-            cpu = int(parsed_xml.domain.vcpu.cdata)
-            state = domain.state()[0]
-            
-            vms.append({
-              "uuid": uuid,
-              "name": name,
-              "ram":ram,
-              "cpu":cpu,
-              "state":state
-            })
+            vms.append(self.get_vm_detail(domain.UUID()))
         return vms
+
+
+        
+    def create_vm(self, config):
+       uuid = self.conn.createXML(config).UUID()
+       return self.get_vm_detail(uuid)
+
 
 class LibvirtClient:
     libvirt_client = LibvirtWrapper()
+
+
+

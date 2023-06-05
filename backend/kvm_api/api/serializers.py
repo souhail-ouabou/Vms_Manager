@@ -1,4 +1,5 @@
 from rest_framework import serializers
+import xml.etree.ElementTree as ET
 
 
 
@@ -48,5 +49,59 @@ class VmReadSerializer(serializers.Serializer):
 
 class VmCreateSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=100)
-    ram = serializers.IntegerField(min_value=1)
-    cpu = serializers.IntegerField(min_value=1)
+    ram = serializers.IntegerField(min_value=1, max_value=4)
+    cpu = serializers.IntegerField(min_value=1, max_value=4)
+    iso_path = serializers.FilePathField(path="/home/aayar/Desktop/isos", required=True)
+    
+    
+    def save(self, **kwargs):
+        libvirt_client = kwargs.get("libvirt_client", None)
+        name = self.validated_data["name"]
+        ram = self.validated_data["ram"]
+        cpu = self.validated_data["cpu"]
+        iso_path = self.validated_data["iso_path"]
+        
+        
+        
+        xml_config = f'''
+            <domain type="kvm">
+                <name>{name}</name>
+                <memory unit="GB">{ram}</memory>
+                <vcpu placement="static">{cpu}</vcpu>
+                
+                <os>
+                        <type arch='x86_64' machine='pc-i440fx-2.9'>hvm</type>
+                        <boot dev='cdrom'/>
+                </os>
+                
+                <devices>
+                    <disk type='file' device='cdrom'>
+                            <driver name='qemu' type='raw'/>
+                            <source file='{iso_path}'/>
+                            <target dev='hda' bus='ide'/>
+                            <readonly/>
+                    </disk>
+                    <interface type='network'>
+                            <mac address='52:54:00:4e:6f:78'/>
+                            <source network='default'/>
+                            <model type='virtio'/>
+                    </interface>
+                    
+                    <graphics type="spice" autoport="yes">
+                        <listen type="address"/>
+                        <image compression="off"/>
+                    </graphics>
+                
+                </devices>
+                
+                
+                <!-- Other XML elements and structure -->
+            </domain>
+        '''
+       
+
+        if libvirt_client:
+            return libvirt_client.create_vm(xml_config)
+            
+            
+    
