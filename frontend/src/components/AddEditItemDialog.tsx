@@ -6,38 +6,36 @@ import { Item } from "../models/item";
 import * as ItemsApi from "../network/items_api";
 
 interface AddEditNoteDialogProps {
-    itemToEdit?: any,
     showModal: boolean,
     onDismiss: () => void,
     onItemSaved: (item: Item) => void
 }
-const AddEditItemDialog = ({ itemToEdit, onDismiss, showModal }: AddEditNoteDialogProps) => {
+const AddEditItemDialog = ({  onItemSaved,onDismiss, showModal }: AddEditNoteDialogProps) => {
     const {
         register,
         handleSubmit,
         formState: { errors, isSubmitting }
     } = useForm<ItemInput>({
         defaultValues: {
-            title: itemToEdit?.title || "",
-            text: itemToEdit?.text || ""
+            name:  "",
+            ram: 2,
+            cpu: 2,
+            iso_path: ""
         }
     });
-    // async function onSubmit(input: ItemInput) {
-    //     try {
-    //         let noteResponse: Item;
-    //         if (itemToEdit) {
-    //             noteResponse = await ItemsApi.updateNote(itemToEdit._id, input);
-    //         }
-    //         else {
-    //             noteResponse = await ItemsApi.createNote(input)
-    //         }
-    //         // onNoteSaved(noteResponse)
-    //         onDismiss()
-    //     } catch (error) {
-    //         console.error(error);
-    //         alert(error)
-    //     }
-    // };
+    async function onSubmit(input: ItemInput) {
+        try {
+            let itemResponse: Item;
+          
+                itemResponse = await ItemsApi.createVm(input)
+            
+                onItemSaved(itemResponse)
+            onDismiss()
+        } catch (error) {
+            console.error(error);
+            alert(error)
+        }
+    };
     return (<>
         {showModal ? (
             <>
@@ -50,26 +48,46 @@ const AddEditItemDialog = ({ itemToEdit, onDismiss, showModal }: AddEditNoteDial
                                     <span className="sr-only">Close modal</span>
                                 </button>
                                 <div className="px-6 py-6 lg:px-8">
-                                    <h3 className="mb-4 text-xl font-medium text-gray-900 dark:text-white"> {itemToEdit ? "Edit note " : "Add note"}</h3>
-                                    <form className="space-y-6"   >
+                                    <h3 className="mb-4 text-xl font-medium text-gray-900 dark:text-white"> {"Add Virtual Machine"}</h3>
+                                    <form className="space-y-6"   onSubmit={handleSubmit(onSubmit)}>
                                         <TextInputField
-                                            name="title"
-                                            label="Title"
+                                            name="name"
+                                            label="Name"
                                             type="text"
-                                            placeholder="Title"
+                                            placeholder="Name"
                                             register={register}
                                             registerOptions={{ required: "Required" }}
-                                            error={errors.title}
+                                            error={errors.name}
+                                        />
+                                              <TextInputField
+                                            name="ram"
+                                            label="Ram"
+                                            type="number"
+                                            placeholder="Ram"
+                                            register={register}
+                                            registerOptions={{ required: "Required" }}
+                                            error={errors.ram}
+                                        />
+                                              <TextInputField
+                                            name="cpu"
+                                            label="Cpu"
+                                            type="number"
+                                            placeholder="Cpu"
+                                            register={register}
+                                            registerOptions={{ required: "Required" }}
+                                            error={errors.cpu}
+                                        />
+                                              <TextInputField
+                                            name="iso_path"
+                                            label="Iso Path"
+                                            type="text"
+                                            placeholder="iso path"
+                                            register={register}
+                                            registerOptions={{ required: "Required" }}
+                                            error={errors.iso_path}
                                         />
 
-                                        <TextInputField
-                                            name="text"
-                                            label="Text"
-                                            area={true}
-                                            rows={5}
-                                            placeholder="Text"
-                                            register={register}
-                                        />
+                                      
 
                                         <div className="flex">
                                             <button className="ml-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"

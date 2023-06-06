@@ -2,8 +2,10 @@ import { ConflictError, UnauthorizedError } from "../errors/http_errors";
 import { Item } from "../models/item";
 
 export interface ItemInput {
-  title: string;
-  text?: string;
+  name: string;
+  ram?: number;
+  cpu: number;
+  iso_path?: string;
 }
 
 async function fetchData(input: RequestInfo, init?: RequestInit) {
@@ -46,4 +48,15 @@ export async function deleteItem(item: Item) {
   await fetchData(`http://127.0.0.1:8000/api/vms/${item.name}/delete/`, {
     method: "POST",
   });
+}
+export async function createVm(item: ItemInput): Promise<Item> {
+  const response = await fetchData("http://127.0.0.1:8000/api/vms/",
+      {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json",
+          },
+          body: JSON.stringify(item),
+      });
+  return response.json();
 }

@@ -106,6 +106,14 @@ const Overview = () => {
                     Add VM
                 </button>
             </div>
+            {showEditItemDialog &&
+                <AddEditItemDialog
+                    onDismiss={() => setShowEditItemDialog(false)}
+                    showModal={true} onItemSaved={(newItem) => {
+                        setItems([...items, newItem])
+                        setShowEditItemDialog(false)
+                    }} />
+            }
             {itemsLoading &&
                 <div className="mx-auto container py-2 px-6  animate-pulse">
                     <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
@@ -125,16 +133,7 @@ const Overview = () => {
                 }
             </>
             }
-            {itemToEdit &&
-                <AddEditItemDialog
-                    onDismiss={() => setItemToEdit(null)}
-                    showModal={true}
-                    itemToEdit={itemToEdit}
-                    onItemSaved={(updatedItem) => {
-                        setItems(items.map(existingItem => existingItem.uuid === existingItem.uuid ? updatedItem : existingItem))
-                        setItemToEdit(null);
-                    }} />
-            }
+
 
         </>
     );
