@@ -1,6 +1,7 @@
 asgiref==3.7.2
 defusedxml==0.7.1
 Django==4.2.1
+django-cors-headers==4.0.0
 djangorestframework==3.14.0
 libvirt-python==9.4.0
 pytz==2023.3
