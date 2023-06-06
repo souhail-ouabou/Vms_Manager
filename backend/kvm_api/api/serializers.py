@@ -1,6 +1,7 @@
 from rest_framework import serializers
-import xml.etree.ElementTree as ET
+import getpass
 
+from .utils import validate_iso_path
 
 
 VIR_DOMAIN_NOSTATE = 0
@@ -12,6 +13,7 @@ VIR_DOMAIN_SHUTOFF = 5
 VIR_DOMAIN_CRASHED = 6
 VIR_DOMAIN_PMSUSPENDED = 7
 VIR_DOMAIN_LAST = 8
+
 
 CHOICES = (
     (VIR_DOMAIN_NOSTATE, 'No state'),
@@ -48,10 +50,12 @@ class VmReadSerializer(serializers.Serializer):
 
 
 class VmCreateSerializer(serializers.Serializer):
+    
+
     name = serializers.CharField(max_length=100)
     ram = serializers.IntegerField(min_value=1, max_value=4)
     cpu = serializers.IntegerField(min_value=1, max_value=4)
-    iso_path = serializers.FilePathField(path="/home/aayar/Desktop/isos", required=True)
+    iso_path = serializers.CharField(validators=[validate_iso_path])
     
     
     def save(self, **kwargs):

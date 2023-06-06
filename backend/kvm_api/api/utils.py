@@ -1,5 +1,8 @@
 import libvirt
 import untangle
+from pathlib import Path
+from rest_framework.serializers import ValidationError
+
 
 class LibvirtWrapper:
     def __init__(self):
@@ -79,3 +82,7 @@ class LibvirtClient:
 
 
 
+
+def validate_iso_path(path):
+    if not Path(path).suffix == '.iso':
+        raise ValidationError("Provided file is not an iso.")
