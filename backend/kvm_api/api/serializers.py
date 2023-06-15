@@ -2,6 +2,8 @@ from rest_framework import serializers
 import getpass
 
 from .utils import validate_iso_path
+import os
+
 
 
 VIR_DOMAIN_NOSTATE = 0
@@ -55,6 +57,7 @@ class VmCreateSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=100)
     ram = serializers.IntegerField(min_value=1, max_value=4)
     cpu = serializers.IntegerField(min_value=1, max_value=4)
+    storage = serializers.FloatField(min_value=10, max_value=20)
     iso_path = serializers.CharField(validators=[validate_iso_path])
     
     
@@ -62,8 +65,13 @@ class VmCreateSerializer(serializers.Serializer):
         libvirt_client = kwargs.get("libvirt_client", None)
         name = self.validated_data["name"]
         ram = self.validated_data["ram"]
+        storage = self.validated_data["storage"]
         cpu = self.validated_data["cpu"]
         iso_path = self.validated_data["iso_path"]
+        
+        create_new_img_cmd = f"qemu-img create -f qcow2 /home/{getpass.getuser()}/Desktop/{name}.qcow2 {storage}G "
+        os.system(create_new_img_cmd)
+
         
         
         
@@ -75,16 +83,35 @@ class VmCreateSerializer(serializers.Serializer):
                 
                 <os>
                         <type arch='x86_64' machine='pc-i440fx-2.9'>hvm</type>
-                        <boot dev='cdrom'/>
                 </os>
                 
+                
+                <features>
+                        <acpi/>
+                </features>
                 <devices>
+                
+                
+                     <disk type='file' device='disk' >
+                            <driver name='qemu' type='qcow2'/>
+                            <source file='{f"/home/{getpass.getuser()}/Desktop/{name}.qcow2"}'/>
+                            <target dev='vda' bus='virtio'/>
+                            <address type='pci' domain='0x0000' bus='0x00' slot='0x04' function='0x0'/>
+                            <boot order="1"/>
+                    </disk>
                     <disk type='file' device='cdrom'>
                             <driver name='qemu' type='raw'/>
                             <source file='{iso_path}'/>
-                            <target dev='hda' bus='ide'/>
+                            <target dev='sda' bus='sata'/>
                             <readonly/>
+                            <address type='drive' controller='0' bus='0' target='0' unit='0'/>
+                            <boot order="2"/>
                     </disk>
+                    
+         
+
+                    
+                   
                     <interface type='network'>
                             <mac address='52:54:00:4e:6f:78'/>
                             <source network='default'/>
@@ -95,6 +122,17 @@ class VmCreateSerializer(serializers.Serializer):
                         <listen type="address"/>
                         <image compression="off"/>
                     </graphics>
+                    
+                    
+                    
+                    
+
+                    <!-- Qemu guest agent -->
+
+                    <channel type="unix">
+                        <target type="virtio" name="org.qemu.guest_agent.0"/>
+                        <address type="virtio-serial" controller="0" bus="0" port="1"/>
+                    </channel>
                 
                 </devices>
                 
