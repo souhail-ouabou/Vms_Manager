@@ -5,7 +5,7 @@ export interface ItemInput {
   name: string;
   ram?: number;
   cpu: number;
-  storage : number;
+  storage: number;
   iso_path?: string;
 }
 
@@ -45,6 +45,12 @@ export async function updateItemToStart(item: Item) {
     method: "POST",
   });
 }
+
+export async function updateItemToShutdown(item: Item) {
+  await fetchData(`http://127.0.0.1:8000/api/vms/${item.name}/shutdown/`, {
+    method: "POST",
+  });
+}
 export async function updateItemToResume(item: Item) {
   await fetchData(`http://127.0.0.1:8000/api/vms/${item.name}/resume/`, {
     method: "POST",
@@ -56,13 +62,12 @@ export async function deleteItem(item: Item) {
   });
 }
 export async function createVm(item: ItemInput): Promise<Item> {
-  const response = await fetchData("http://127.0.0.1:8000/api/vms/",
-      {
-          method: "POST",
-          headers: {
-              "Content-Type": "application/json",
-          },
-          body: JSON.stringify(item),
-      });
+  const response = await fetchData("http://127.0.0.1:8000/api/vms/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(item),
+  });
   return response.json();
 }

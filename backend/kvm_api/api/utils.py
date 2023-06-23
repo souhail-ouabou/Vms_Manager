@@ -18,6 +18,9 @@ class LibvirtWrapper:
     def shutdown_vm(self, domain_name):
         domain = self.get_domain(domain_name)
         domain.shutdown()
+    
+        
+      
         
     def stop_vm(self, domain_name):
         domain = self.get_domain(domain_name)
@@ -42,6 +45,7 @@ class LibvirtWrapper:
     def start_vm(self,domain_name):
         domain = self.get_domain(domain_name)
         domain.create()
+    
         
         
     def get_vm_detail(self, uuid):
