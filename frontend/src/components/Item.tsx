@@ -16,9 +16,10 @@ const Item = ({ item,onDeleteClicked }: ItemProps) => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         async function stopVm() {
           try {
-                // let itemResponse: ItemModel;
+                let itemResponse: ItemModel;
                 setCheck(false);
-               await ItemsApi.updateItemToStop(item);
+                itemResponse =  await ItemsApi.updateItemToStop(item);
+                 onNoteSaved(noteResponse)
             }
            catch (error) {
             console.error(error);

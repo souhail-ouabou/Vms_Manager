@@ -13,48 +13,48 @@ const Overview = () => {
 
     const [showEditItemDialog, setShowEditItemDialog] = useState(false);
 
-    const itemss = [
-        {
-            "uuid": "e430f0bc-7ad7-4492-8b68-1d32e4161e57",
-            "name": "ubuntu22.04",
-            "ram": 2048,
-            "cpu": 2,
-            "state": {
-                "id": 1,
-                "state": "The domain is shut off"
-            }
-        },  
-        {
-            "uuid": "e430f0dc-7ad7-4492-8b68-1d32e4161e57",
-            "name": "ubuntu22.04 2",
-            "ram": 2048,
-            "cpu": 2,
-            "state": {
-                "id": 5,
-                "state": "The domain is shut off"
-            }
-        },
-        {
-            "uuid": "e430f0dk-7ad7-4492-8b68-1d32e4161e57",
-            "name": "ubuntu22.04 2",
-            "ram": 2048,
-            "cpu": 2,
-            "state": {
-                "id": 5,
-                "state": "The domain is shut off"
-            }
-        },
-        {
-            "uuid": "e430k0dc-7ad7-4492-8b68-1d32e4161e57",
-            "name": "ubuntu22.04 2",
-            "ram": 2048,
-            "cpu": 2,
-            "state": {
-                "id": 1,
-                "state": "The domain is shut off"
-            }
-        }
-    ]
+    // const itemss = [
+    //     {
+    //         "uuid": "e430f0bc-7ad7-4492-8b68-1d32e4161e57",
+    //         "name": "ubuntu22.04",
+    //         "ram": 2048,
+    //         "cpu": 2,
+    //         "state": {
+    //             "id": 1,
+    //             "state": "The domain is shut off"
+    //         }
+    //     },  
+    //     {
+    //         "uuid": "e430f0dc-7ad7-4492-8b68-1d32e4161e57",
+    //         "name": "ubuntu22.04 2",
+    //         "ram": 2048,
+    //         "cpu": 2,
+    //         "state": {
+    //             "id": 5,
+    //             "state": "The domain is shut off"
+    //         }
+    //     },
+    //     {
+    //         "uuid": "e430f0dk-7ad7-4492-8b68-1d32e4161e57",
+    //         "name": "ubuntu22.04 2",
+    //         "ram": 2048,
+    //         "cpu": 2,
+    //         "state": {
+    //             "id": 5,
+    //             "state": "The domain is shut off"
+    //         }
+    //     },
+    //     {
+    //         "uuid": "e430k0dc-7ad7-4492-8b68-1d32e4161e57",
+    //         "name": "ubuntu22.04 2",
+    //         "ram": 2048,
+    //         "cpu": 2,
+    //         "state": {
+    //             "id": 1,
+    //             "state": "The domain is shut off"
+    //         }
+    //     }
+    // ]
     useEffect(() => {
         async function loadItems() {
             try {
@@ -129,7 +129,7 @@ const Overview = () => {
             {!itemsLoading && !showItemsLoadingError &&
             <>
                 {items.length > 0
-                    ? itemsGrid : <p>You don't have any Vms yet</p>
+                    ? itemsGrid : <p className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">You don't have any Vms yet</p>
                 }
             </>
             }

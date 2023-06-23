@@ -5,6 +5,7 @@ export interface ItemInput {
   name: string;
   ram?: number;
   cpu: number;
+  storage : number;
   iso_path?: string;
 }
 

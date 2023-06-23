@@ -20,7 +20,8 @@ const AddEditItemDialog = ({  onItemSaved,onDismiss, showModal }: AddEditNoteDia
             name:  "",
             ram: 2,
             cpu: 2,
-            iso_path: ""
+            iso_path: "",
+            storage : 20
         }
     });
     async function onSubmit(input: ItemInput) {
@@ -77,6 +78,15 @@ const AddEditItemDialog = ({  onItemSaved,onDismiss, showModal }: AddEditNoteDia
                                             registerOptions={{ required: "Required" }}
                                             error={errors.cpu}
                                         />
+                                             <TextInputField
+                                            name="storage"
+                                            label="Storage on GB"
+                                            type="text"
+                                            placeholder="20"
+                                            register={register}
+                                            registerOptions={{ required: "Required" }}
+                                            error={errors.storage}
+                                        />
                                               <TextInputField
                                             name="iso_path"
                                             label="Iso Path"
@@ -86,8 +96,7 @@ const AddEditItemDialog = ({  onItemSaved,onDismiss, showModal }: AddEditNoteDia
                                             registerOptions={{ required: "Required" }}
                                             error={errors.iso_path}
                                         />
-
-                                      
+                                                                             
 
                                         <div className="flex">
                                             <button className="ml-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"

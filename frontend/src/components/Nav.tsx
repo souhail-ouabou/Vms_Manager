@@ -8,13 +8,8 @@ const Nav = () => {
         >
                 <DarkThemeToggle />
             <Navbar.Brand href="/navbars">
-                <img
-                    alt="Flowbite Logo"
-                    className="mr-3 h-6 sm:h-9"
-                    src="https://flowbite.com/docs/images/logo.svg"
-                />
-                <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
-                    Flowbite
+                <span className="self-start whitespace-nowrap text-xl font-semibold dark:text-white">
+                    Libvirt Manager
                 </span>
             </Navbar.Brand>
             <Navbar.Toggle />
