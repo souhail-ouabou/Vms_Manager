@@ -81,15 +81,22 @@ const Overview = () => {
             alert(error)
         }
     }
+    async function startVm(item: ItemModel) {
+        try {
+            await ItemsApi.updateItemToStart(item);
+        } catch (error) {
+            console.error(error);
+            alert(error)
+        }
+    }
     const itemsGrid = <div className="mx-auto container py-2 px-6">
         <div className="grid sm:gap-6 gap-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 ">
             {items.map((item) => (
                 <Item
                     item={item}
                     key={item.uuid}
-                    // onChangeStateClicked={item} 
-                //    onItemClicked={setItemToEdit} // or   onNoteClicked={(note) => setNoteToEdit(note)}
-                   onDeleteClicked={deleteItem} 
+                    onStartClicked={startVm}
+                    onDeleteClicked={deleteItem} 
                 />)
             )}
         </div>

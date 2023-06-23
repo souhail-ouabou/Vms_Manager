@@ -40,6 +40,11 @@ export async function updateItemToStop(item: Item) {
     method: "POST",
   });
 }
+export async function updateItemToStart(item: Item) {
+  await fetchData(`http://127.0.0.1:8000/api/vms/${item.name}/start/`, {
+    method: "POST",
+  });
+}
 export async function updateItemToResume(item: Item) {
   await fetchData(`http://127.0.0.1:8000/api/vms/${item.name}/resume/`, {
     method: "POST",
