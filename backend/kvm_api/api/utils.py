@@ -1,7 +1,10 @@
 import libvirt
 import untangle
-from pathlib import Path
-from rest_framework.serializers import ValidationError
+import time
+import threading
+
+from rest_framework.exceptions import APIException
+
 
 
 class LibvirtWrapper:
@@ -15,16 +18,87 @@ class LibvirtWrapper:
     # Implement methods for starting, stopping, creating, etc., VMs
 
 
+    # def shutdown_vm(self, domain_name):
+    #     domain = self.get_domain(domain_name)
+        
+    #     # Get the current state of the domain
+    #     state, _ = domain.state()
+        
+    #     if state == libvirt.VIR_DOMAIN_RUNNING:
+    #         domain.shutdown()
+    #     else:
+    #         return
+        
     def shutdown_vm(self, domain_name):
+        def timeout_handler():
+            try:
+                time.sleep(2)  # Wait for 3 seconds
+                if not shutdown_event.is_set():
+                    raise TimeoutError("Timeout occurred while waiting for the domain to shut off.")
+            except TimeoutError as e:
+                self.timeout_exception = e
+
+            shutdown_event.set()
+
+        # Create an event to signal the shutdown completion
+        shutdown_event = threading.Event()
+
+        # Initialize the timeout exception to None
+        self.timeout_exception = None
+
+        # Start a thread to handle the timeout
+        timeout_thread = threading.Thread(target=timeout_handler)
+        timeout_thread.start()
+
         domain = self.get_domain(domain_name)
-        domain.shutdown()
-    
         
-      
+        # Get the current state of the domain
+        state, _ = domain.state()
         
+        
+        if state == libvirt.VIR_DOMAIN_RUNNING:
+            domain.shutdown()
+        else:
+            return
+        
+        while True:
+            
+
+            # Check if the domain has shut off
+            if state == libvirt.VIR_DOMAIN_SHUTOFF:
+                shutdown_event.set()
+                
+                
+
+            # # Check if the timeout event has been set
+            if shutdown_event.is_set():
+                break
+
+            print("Shutting down...")
+            # Sleep for a short duration before checking again
+            time.sleep(1)
+
+        # Handle the timeout exception if it occurred
+        if self.timeout_exception:
+            # Do something with the exception
+            self.shutdown_vm(domain_name)
+
+     
     def stop_vm(self, domain_name):
         domain = self.get_domain(domain_name)
         domain.suspend()
+        
+        while True:
+            # Get the current state of the domain
+            state, _ = domain.state()
+
+            # Check if the domain has shut off
+            if state == libvirt.VIR_DOMAIN_PAUSED:
+               break
+
+            # Sleep for a short duration before checking again
+            time.sleep(1)
+    
         
     def delete_vm(self, domain_name):
         domain = self.get_domain(domain_name)
@@ -42,9 +116,31 @@ class LibvirtWrapper:
         domain = self.get_domain(domain_name)
         domain.resume()
         
+        while True:
+            # Get the current state of the domain
+            state, _ = domain.state()
+
+            # Check if the domain has shut off
+            if state == libvirt.VIR_DOMAIN_RUNNING:
+                break
+
+            # Sleep for a short duration before checking again
+            time.sleep(1)
+        
     def start_vm(self,domain_name):
         domain = self.get_domain(domain_name)
         domain.create()
+        
+        while True:
+            # Get the current state of the domain
+            state, _ = domain.state()
+
+            # Check if the domain has shut off
+            if state == libvirt.VIR_DOMAIN_RUNNING:
+               break
+
+            # Sleep for a short duration before checking again
+            time.sleep(1)
     
         
         
@@ -87,6 +183,3 @@ class LibvirtClient:
 
 
 
-def validate_iso_path(path):
-    if not Path(path).suffix == '.iso':
-        raise ValidationError("Provided file is not an iso.")

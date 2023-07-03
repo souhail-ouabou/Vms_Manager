@@ -1,9 +1,15 @@
 from rest_framework import serializers
+
+from pathlib import Path
 import getpass
 
-from .utils import validate_iso_path
 import os
 
+
+
+def validate_iso_path(path):
+    if not Path(path).suffix == '.iso':
+        raise serializers.ValidationError("Provided file is not an iso.")
 
 
 VIR_DOMAIN_NOSTATE = 0

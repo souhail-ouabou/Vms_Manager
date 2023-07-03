@@ -72,55 +72,19 @@ const Overview = () => {
     loadItems();
   }, []);
 
-  async function deleteItem(item: ItemModel) {
-    try {
-      await ItemsApi.deleteItem(item);
-      setItems(items.filter((existingItem) => existingItem.uuid !== item.uuid));
-      loadItems();
-    } catch (error) {
-      console.error(error);
-      alert(error);
-    }
-  }
-  async function startVm(item: ItemModel) {
-    try {
-      await ItemsApi.updateItemToStart(item);
-      loadItems();
-    } catch (error) {
-      console.error(error);
-      alert(error);
-    }
-  }
+  const handleOnItemStateChange = (newItem: ItemModel) => {
+    setItems((prev) =>
+      prev.map((existingItem) =>
+        existingItem.uuid === newItem.uuid ? newItem : existingItem
+      )
+    );
+  };
 
-  async function shutdownVm(item: ItemModel) {
-    try {
-      await ItemsApi.updateItemToShutdown(item);
-      setTimeout(loadItems, 3000);
-    } catch (error) {
-      console.error(error);
-      alert(error);
-    }
-  }
-
-  async function stopVm(item: ItemModel) {
-    try {
-      await ItemsApi.updateItemToStop(item);
-      loadItems();
-    } catch (error) {
-      console.error(error);
-      alert(error);
-    }
-  }
-  async function resumeVm(item: ItemModel) {
-    try {
-      // let itemResponse: ItemModel;
-      await ItemsApi.updateItemToResume(item);
-      loadItems();
-    } catch (error) {
-      console.error(error);
-      alert(error);
-    }
-  }
+  const handleOnDeleteItem = (uuid: string) => {
+    setItems((prev) =>
+      prev.filter((existingItem) => existingItem.uuid !== uuid)
+    );
+  };
 
   const itemsGrid = (
     <div className="mx-auto container py-2 px-6">
@@ -129,11 +93,8 @@ const Overview = () => {
           <Item
             item={item}
             key={item.uuid}
-            onStartClicked={startVm}
-            onDeleteClicked={deleteItem}
-            onShutdownClicked={shutdownVm}
-            onResumeClicked={resumeVm}
-            onStopClicked={stopVm}
+            onItemStateChange={handleOnItemStateChange}
+            onDeleteItem={handleOnDeleteItem}
           />
         ))}
       </div>

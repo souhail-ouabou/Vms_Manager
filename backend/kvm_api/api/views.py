@@ -14,7 +14,9 @@ from .serializers import VmReadSerializer, VmCreateSerializer
 
 class VirtualMachineControlAPIView(views.APIView, LibvirtClient):
 
+   
     def post(self, request, vm_name, action):
+
         try:
             if action == 'resume':
                 self.libvirt_client.resume_vm(vm_name)
@@ -30,17 +32,34 @@ class VirtualMachineControlAPIView(views.APIView, LibvirtClient):
                 
             elif action == 'shutdown':
                 self.libvirt_client.shutdown_vm(vm_name)
+                
             else:
                 return Response({'message': 'Invalid action'}, status=status.HTTP_400_BAD_REQUEST)
         
         except libvirtError as e:    
-            return Response({'message': e.get_error_message()}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            if hasattr(self, 'exception'):
+                # Exception raised during the timeout period
+                return Response({'message': str(self.exception)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            else:
+                # Other exceptions
+                return Response({'message': e.get_error_message()}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-        except:
-            return Response({'message': 'Something went wrong'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+                return Response({'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-        return Response({'message': f'{action} command sent for VM {vm_name}'}, status=status.HTTP_200_OK)
-    
+
+
+        if not action == "delete":
+            domain = self.libvirt_client.get_domain(vm_name)
+            serializer = VmReadSerializer(self.libvirt_client.get_vm_detail(domain.UUID()))
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(
+            {
+                "message": "OK"
+            }, 
+            status=status.HTTP_200_OK
+        ) 
 
 
 vm_control_api_view = VirtualMachineControlAPIView.as_view()
